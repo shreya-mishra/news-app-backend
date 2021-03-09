@@ -7,6 +7,9 @@ import magazineRoutes from "./routes/magazineRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddlewares.js";
 import path from "path";
 
+
+let port = process.env.PORT || 5000
+
 const app = express();
 
 //accept json data
@@ -15,6 +18,7 @@ app.use(express.json());
 // making image folder public
 const __dirname = path.resolve();
 app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
+
 
 // connecting to db
 dotenv.config();
@@ -33,4 +37,4 @@ app.use("/api", (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(5000, console.log("Server Running on http://localhost:5000/api"));
+app.listen(5000, console.log(`Server Running on http://localhost:${port}/api`));
