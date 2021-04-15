@@ -33,4 +33,19 @@ const createMagazine = asyncHandler(async (req, res) => {
   res.status(201).json(createdMagazine);
 });
 
-export { getMagazine, createMagazine };
+// @desc    Delete any magazine
+// @route   DELETE /api/magazine/admin/:id
+// @access  Private
+const deleteAnyMagazine = asyncHandler(async (req, res) => {
+  const magazine = await Magazine.findById(req.params.id);
+
+  if (magazine) {
+    await magazine.remove();
+    res.json({ message: "Magazine Removed" });
+  } else {
+    res.status(404);
+    throw new Error("Magazine not Found");
+  }
+});
+
+export { getMagazine, createMagazine, deleteAnyMagazine };

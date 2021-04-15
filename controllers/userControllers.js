@@ -3,6 +3,27 @@ import User from "../models/userModel.js";
 import otpGenerator from "otp-generator";
 import generateToken from "../utils/generateToken.js";
 
+//@description     Get user info
+//@route           GET /api/user/
+//@access          Public
+const getProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.body._id);
+
+  if (user) {
+    res.status(201).json({
+      name: user.name,
+      email: user.email,
+      pic: user.pic,
+      wallet: user.wallet,
+      isAdmin: user.isAdmin,
+      phone: user.phone,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+});
+
 //@description     Auth the user
 //@route           POST /api/user/login
 //@access          Public
@@ -32,14 +53,14 @@ const authUser = asyncHandler(async (req, res) => {
     user.otp = otp;
 
     await user.save();
-    res.status(201).json({ success: true, otp: otp });
+    res.status(201).json({ success: true });
   } else {
     const createdUser = await User.create({
       phone,
       otp,
     });
     await createdUser.save();
-    res.status(201).json({ success: true, otp: otp });
+    res.status(201).json({ success: true });
   }
 });
 
@@ -80,4 +101,41 @@ const verifyOTP = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, verifyOTP };
+// @desc    update profile
+// @route   PUT /api/user/profile
+// @access  Private
+const updateProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  // profile pic logic
+  if (!req.file)
+    return res.status(400).json({ message: "No image in the request" });
+  const fileName = req.file.filename;
+  const basePath = `${req.protocol}://${req.get(
+    "host"
+  )}/public/uploads/${fileName}`;
+
+  // update logic
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.pic = basePath || user.pic;
+    user.phone = req.body.phone || user.phone;
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(201).json({
+      updatedUser,
+      token: generateToken(user._id),
+      success: true,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User Not Found");
+  }
+});
+
+export { getProfile, authUser, verifyOTP, updateProfile };
