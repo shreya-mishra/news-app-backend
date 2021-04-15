@@ -25,12 +25,13 @@ dotenv.config();
 connectDB();
 
 // Main API Routes
+app.use("/", newsRoutes);
 
 app.use("/api/news", newsRoutes);
 app.use("/api/magazine", magazineRoutes);
 app.use("/api/user", userRoutes);
 
-app.use("/", (req, res) => {
+app.use("/api", (req, res) => {
   res.send("API Working");
 });
 
