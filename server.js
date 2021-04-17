@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import newsRoutes from "./routes/newsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import magazineRoutes from "./routes/magazineRoutes.js";
+import viralRoutes from "./routes/viralRoutes.js";
+
 import { errorHandler, notFound } from "./middlewares/errorMiddlewares.js";
 import path from "path";
 
@@ -31,7 +33,6 @@ app.use("/api", newsRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/magazine", magazineRoutes);
 app.use("/api/viral", viralRoutes);
-
 app.use("/api/user", userRoutes);
 
 app.use("/", (req, res) => {
