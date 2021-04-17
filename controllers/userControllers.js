@@ -53,14 +53,14 @@ const authUser = asyncHandler(async (req, res) => {
     user.otp = otp;
 
     await user.save();
-    res.status(201).json({ success: true });
+    res.status(201).json({ success: true, otp: user.otp });
   } else {
     const createdUser = await User.create({
       phone,
       otp,
     });
     await createdUser.save();
-    res.status(201).json({ success: true });
+    res.status(201).json({ success: true, otp: user.otp });
   }
 });
 
