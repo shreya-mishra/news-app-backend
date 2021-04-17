@@ -30,6 +30,8 @@ app.use("/api", newsRoutes);
 
 app.use("/api/news", newsRoutes);
 app.use("/api/magazine", magazineRoutes);
+app.use("/api/viral", viralRoutes);
+
 app.use("/api/user", userRoutes);
 
 app.use("/", (req, res) => {
