@@ -5,7 +5,19 @@ import asyncHandler from "express-async-handler";
 // @route   GET /api/news
 // @access  Public
 const getNews = asyncHandler(async (req, res) => {
-  const news = await News.find().populate("user");
+  const pageDisp = 2;
+  const query = req.query;
+  console.log(query);
+
+  const news = await News.find(query.category && { category: query.category })
+    .limit(parseInt(query.page) * pageDisp)
+    .populate("user", "_id phone name email isAdmin pic location")
+    .populate("comments.postedBy", "_id name pic");
+
+  const count = await News.count(
+    query.category && { category: query.category }
+  );
+
   res.json({ news, count });
 });
 
@@ -13,15 +25,16 @@ const getNews = asyncHandler(async (req, res) => {
 //@route           POST /api/admin/create
 //@access          Private - Admin
 const createNews = asyncHandler(async (req, res) => {
-  const { title, content, category, source, location } = req.body;
+  const { title, content, category, source, location, pic } = req.body;
 
-  if (!req.file) return res.status(400).send("No image in the request");
-  const fileName = req.file.filename;
-  const basePath = `${req.protocol}://${req.get(
-    "host"
-  )}/public/uploads/${fileName}`;
+  // if (!req.file) //weddd
+  //   return res.status(400).json({ message: "No image in the request" });
+  // const fileName = req.file.filename;
+  // const basePath = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/public/uploads/${fileName}`;
 
-  if (!title || !content || !category || !source || !location) {
+  if (!title || !content || !category || !source || !location || !pic) {
     res.status(400);
     throw new Error("Please Fill all the feilds");
   } else {
@@ -32,7 +45,8 @@ const createNews = asyncHandler(async (req, res) => {
       category,
       source,
       location,
-      pic: basePath,
+      pic,
+      // pic: basePath,
     });
 
     const createdNews = await news.save();
@@ -41,13 +55,13 @@ const createNews = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Delete a news
+// @desc    Delete a news by owner user or admin
 // @route   DELETE /api/news/:id
 // @access  Private
 const deleteNews = asyncHandler(async (req, res) => {
   const news = await News.findById(req.params.id);
 
-  if (news.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+  if (news.user.toString() !== req.user._id.toString() || !req.user.isAdmin) {
     res.status(401);
     throw new Error("You can't perform this action");
   }
@@ -143,7 +157,7 @@ const commentNews = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  ).populate("comments.postedBy", "_id name");
+  ).populate("comments.postedBy", "_id name pic");
 
   if (!commentMade) {
     res.status(404);
