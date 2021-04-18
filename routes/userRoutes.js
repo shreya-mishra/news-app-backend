@@ -13,8 +13,7 @@ const router = express.Router();
 router.route("/").get(getProfile);
 router.route("/login").post(authUser);
 router.route("/verify").post(verifyOTP);
-router
-  .route("/profile")
-  .put(protect, uploadOptions.single("pic"), updateProfile);
+router.route("/profile").put(protect, updateProfile);
+// .put(protect, uploadOptions.single("pic"), updateProfile);
 
 export default router;

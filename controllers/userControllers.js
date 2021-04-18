@@ -16,6 +16,7 @@ const getProfile = asyncHandler(async (req, res) => {
       pic: user.pic,
       wallet: user.wallet,
       isAdmin: user.isAdmin,
+      location: user.location,
       phone: user.phone,
     });
   } else {
@@ -35,7 +36,7 @@ const authUser = asyncHandler(async (req, res) => {
     specialChars: false,
   });
 
-  console.log(otp);
+  // console.log(otp);
 
   if (!phone || phone.toString().length !== 10) {
     res.status(400);
@@ -49,6 +50,7 @@ const authUser = asyncHandler(async (req, res) => {
     user.email = req.body.email || user.email;
     user.pic = req.body.pic || user.pic;
     user.phone = req.body.phone || user.phone;
+    user.location = req.body.location || user.location;
     user.isAdmin = user.isAdmin;
     user.otp = otp;
 
@@ -108,19 +110,20 @@ const updateProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   // profile pic logic
-  if (!req.file)
-    return res.status(400).json({ message: "No image in the request" });
-  const fileName = req.file.filename;
-  const basePath = `${req.protocol}://${req.get(
-    "host"
-  )}/public/uploads/${fileName}`;
+  // if (!req.file)
+  //   return res.status(400).json({ message: "No image in the request" });
+  // const fileName = req.file.filename;
+  // const basePath = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/public/uploads/${fileName}`;
 
   // update logic
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    user.pic = basePath || user.pic;
+    user.pic = req.body.pic || user.pic;
     user.phone = req.body.phone || user.phone;
+    user.location = req.body.location || user.location;
     if (req.body.password) {
       user.password = req.body.password;
     }
