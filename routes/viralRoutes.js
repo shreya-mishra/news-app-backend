@@ -13,7 +13,7 @@ const router = express.Router();
 import { admin, protect } from "../middlewares/authMiddlewares.js";
 
 router.route("/").get(getViral);
-router.route("/create").post(protect, admin, createViral);
+router.route("/create").post(protect, createViral);
 router.route("/:id").delete(protect, deleteViral);
 router.route("/like").put(protect, likeViral);
 router.route("/unlike").put(protect, unlikeViral);
