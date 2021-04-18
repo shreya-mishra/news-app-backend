@@ -6,7 +6,7 @@ import asyncHandler from "express-async-handler";
 // @access  Public
 const getNews = asyncHandler(async (req, res) => {
   const news = await News.find().populate("user");
-  res.json(news);
+  res.json({ news, count });
 });
 
 //@description     Create single News
