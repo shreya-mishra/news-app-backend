@@ -13,6 +13,7 @@ const getMagazine = asyncHandler(async (req, res) => {
 // @route   GET /api/magazine/admin/create
 // @access  Private only admins
 const createMagazine = asyncHandler(async (req, res) => {
+  const { isPage } = req.body;
   const files = req.files;
   let imagesPaths = [];
   const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
@@ -26,6 +27,7 @@ const createMagazine = asyncHandler(async (req, res) => {
   const magazine = new Magazine({
     user: req.user._id,
     pics: imagesPaths,
+    isPage: isPage ? isPage : false,
   });
 
   const createdMagazine = await magazine.save();

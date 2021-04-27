@@ -5,8 +5,9 @@ import asyncHandler from "express-async-handler";
 // @route   GET /api/news
 // @access  Public
 const getNews = asyncHandler(async (req, res) => {
-  const pageDisp = 2;
+  const pageDisp = 3;
   const query = req.query;
+
   console.log(query);
 
   const news = await News.find(query.category && { category: query.category })
@@ -25,9 +26,9 @@ const getNews = asyncHandler(async (req, res) => {
 //@route           POST /api/admin/create
 //@access          Private - Admin
 const createNews = asyncHandler(async (req, res) => {
-  const { title, content, category, source, location, pic } = req.body;
+  const { title, content, category, source, location, pic, isVideo } = req.body;
 
-  // if (!req.file) //weddd
+  // if (!req.file)
   //   return res.status(400).json({ message: "No image in the request" });
   // const fileName = req.file.filename;
   // const basePath = `${req.protocol}://${req.get(
@@ -46,6 +47,7 @@ const createNews = asyncHandler(async (req, res) => {
       source,
       location,
       pic,
+      isVideo: isVideo ? isVideo : false,
       // pic: basePath,
     });
 

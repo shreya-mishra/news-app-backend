@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import News from "../models/newsModel.js";
-import TempNews from "../models/TempNewsModel.js";
+import TempNews from "../models/tempNewsModel.js";
 
 // @desc    Get to be approved news
 // @route   GET /api/news/admin

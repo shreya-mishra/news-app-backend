@@ -38,6 +38,10 @@ const newsSchema = mongoose.Schema(
         postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
     ],
+    isVideo: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

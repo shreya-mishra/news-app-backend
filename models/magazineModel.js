@@ -13,6 +13,10 @@ const magazineSchema = mongoose.Schema(
         required: true,
       },
     ],
+    isPage: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
