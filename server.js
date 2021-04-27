@@ -35,9 +35,8 @@ app.use("/api/magazine", magazineRoutes);
 app.use("/api/viral", viralRoutes);
 app.use("/api/user", userRoutes);
 
-app.use("/", (req, res) => {
-  res.send("API Working");
-});
+app.use("/", newsRoutes);
+
 
 //error middlewares
 app.use(notFound);
