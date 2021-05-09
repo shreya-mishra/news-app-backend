@@ -8,6 +8,8 @@ import {
   unlikeNews,
   commentNews,
   delCommentNews,
+  reportNews,
+  getReportNews,
 } from "../controllers/newsControllers.js";
 import {
   createTempNews,
@@ -27,6 +29,8 @@ router.route("/like").put(protect, likeNews);
 router.route("/unlike").put(protect, unlikeNews);
 router.route("/comment").put(protect, commentNews);
 router.route("/deletecomment").put(protect, delCommentNews);
+router.route("/report").get(protect, getReportNews);
+router.route("/report").put(protect, reportNews);
 // Admin Routes
 router.route("/admin/:id").delete(protect, admin, deleteAnyNews);
 // router

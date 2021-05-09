@@ -1,5 +1,6 @@
 import News from "../models/newsModel.js";
 import asyncHandler from "express-async-handler";
+import Report from "../models/reportModel.js";
 
 // @desc    Get all news
 // @route   GET /api/news
@@ -193,6 +194,46 @@ const delCommentNews = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    GET all reported news
+// @route   GET /api/news/report
+// @access  Public
+const getReportNews = asyncHandler(async (req, res) => {
+  const report = await Report.find();
+
+  res.send(report);
+});
+
+// @desc    Report any news
+// @route   PUT /api/news/report
+// @access  Public
+const reportNews = asyncHandler(async (req, res) => {
+  const { newsId } = req.body;
+
+  const report = await Report.findOne({ news: newsId });
+
+  if (report) {
+    const reported = await Report.findByIdAndUpdate(
+      report._id,
+      {
+        $push: { users: req.user._id },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.json(reported);
+  } else {
+    const reported = await Report.create({
+      news: newsId,
+      users: [req.user._id],
+    });
+
+    await reported.save();
+    res.status(201).json({ success: true, message: "News Reported" });
+  }
+});
+
 export {
   getNews,
   createNews,
@@ -202,4 +243,6 @@ export {
   unlikeNews,
   commentNews,
   delCommentNews,
+  reportNews,
+  getReportNews,
 };

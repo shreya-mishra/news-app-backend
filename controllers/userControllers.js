@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import otpGenerator from "otp-generator";
 import generateToken from "../utils/generateToken.js";
+import Bookmark from "../models/bookmarkModel.js";
 
 //@description     Get user info
 //@route           GET /api/user/
@@ -25,7 +26,7 @@ const getProfile = asyncHandler(async (req, res) => {
   }
 });
 
-//@description     Auth the user
+//@description     Login the user
 //@route           POST /api/user/login
 //@access          Public
 const authUser = asyncHandler(async (req, res) => {
@@ -141,4 +142,85 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { getProfile, authUser, verifyOTP, updateProfile };
+// @desc    GET all bookmarks
+// @route   GET /api/user/bookmark
+// @access  Private
+const getBookmarkNews = asyncHandler(async (req, res) => {
+  const bookmark = await Bookmark.findOne({ user: req.user._id }).populate(
+    "newsList"
+  );
+
+  res.send(bookmark);
+});
+
+// @desc    ADD a bookmark
+// @route   PUT /api/user/bookmark
+// @access  Private
+const addBookmarkNews = asyncHandler(async (req, res) => {
+  const { newsId } = req.body;
+
+  const booked = await Bookmark.findOne({ user: req.user._id });
+
+  if (booked) {
+    const bookmarked = await Bookmark.findByIdAndUpdate(
+      booked._id,
+      {
+        $push: { newsList: newsId },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.json(bookmarked);
+  } else {
+    const bookmarked = await Bookmark.create({
+      user: req.user._id,
+      newsList: [newsId],
+    });
+
+    await bookmarked.save();
+    res.status(201).json({ success: true, message: "News Bookmarked" });
+  }
+});
+
+// @desc    Remove a bookmark
+// @route   PUT /api/user/removebookmark
+// @access  Private
+const removeBookmarkNews = asyncHandler(async (req, res) => {
+  const { newsId } = req.body;
+
+  const booked = await Bookmark.findOne({ user: req.user._id });
+
+  if (booked) {
+    const bookmarked = await Bookmark.findByIdAndUpdate(
+      booked._id,
+      {
+        $pull: { newsList: newsId },
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.json(bookmarked);
+  } else {
+    const bookmarked = await Bookmark.create({
+      user: req.user._id,
+      newsList: [newsId],
+    });
+
+    await bookmarked.save();
+    res.status(201).json({ success: true, message: "News Bookmark Removed" });
+  }
+});
+
+export {
+  getProfile,
+  authUser,
+  verifyOTP,
+  updateProfile,
+  getBookmarkNews,
+  addBookmarkNews,
+  removeBookmarkNews,
+};
