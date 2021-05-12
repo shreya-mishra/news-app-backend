@@ -172,7 +172,7 @@ const addBookmarkNews = asyncHandler(async (req, res) => {
       }
     );
 
-    res.json(bookmarked);
+    res.json({ bookmarks: bookmarked, message: "News Bookmarked" });
   } else {
     const bookmarked = await Bookmark.create({
       user: req.user._id,
