@@ -10,6 +10,7 @@ import {
   delCommentNews,
   reportNews,
   getReportNews,
+  getNewsByDate,
 } from "../controllers/newsControllers.js";
 import {
   createTempNews,
@@ -24,6 +25,7 @@ import { admin, protect } from "../middlewares/authMiddlewares.js";
 // ----> Main News
 // Normal News
 router.route("/").get(getNews);
+router.route("/date").get(getNewsByDate);
 router.route("/:id").delete(protect, deleteNews);
 router.route("/like").put(protect, likeNews);
 router.route("/unlike").put(protect, unlikeNews);

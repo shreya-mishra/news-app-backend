@@ -9,8 +9,7 @@ import viralRoutes from "./routes/viralRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddlewares.js";
 import path from "path";
 
-
-let port = process.env.PORT || 7000
+let port = process.env.PORT || 7000;
 
 const app = express();
 
@@ -20,7 +19,6 @@ app.use(express.json());
 // making image folder public
 const __dirname = path.resolve();
 app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
-
 
 // connecting to db
 dotenv.config();
@@ -36,7 +34,6 @@ app.use("/api/viral", viralRoutes);
 app.use("/api/user", userRoutes);
 
 app.use("/", newsRoutes);
-
 
 //error middlewares
 app.use(notFound);

@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import Report from "../models/reportModel.js";
 
 // @desc    Get all news
-// @route   GET /api/news
+// @route   GET /api/news?page=
 // @access  Public
 const getNews = asyncHandler(async (req, res) => {
   const pageDisp = 3;
@@ -19,6 +19,40 @@ const getNews = asyncHandler(async (req, res) => {
   const count = await News.count(
     query.category && { category: query.category }
   );
+
+  res.json({ news, count });
+});
+
+// @desc    Get all news
+// @route   GET /api/news/date
+// @access  Public
+const getNewsByDate = asyncHandler(async (req, res) => {
+  const { hr, min } = req.body;
+
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = today.getFullYear();
+  today = yyyy + "-" + mm + "-" + dd;
+
+  var start = new Date(`${today}T${hr}:${min}`);
+  var end = new Date(`${today}T${hr + 1}:${min}`);
+
+  const news = await News.find({
+    createdAt: {
+      $gte: new Date(start.toUTCString()),
+      $lt: new Date(end.toUTCString()),
+    },
+  })
+    .populate("user", "_id phone name email isAdmin pic location")
+    .populate("comments.postedBy", "_id name pic");
+
+  const count = await News.count({
+    createdAt: {
+      $gte: new Date(start.toUTCString()),
+      $lt: new Date(end.toUTCString()),
+    },
+  });
 
   res.json({ news, count });
 });
@@ -245,4 +279,5 @@ export {
   delCommentNews,
   reportNews,
   getReportNews,
+  getNewsByDate,
 };
