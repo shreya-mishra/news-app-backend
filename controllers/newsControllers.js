@@ -35,8 +35,12 @@ const getNewsByDate = asyncHandler(async (req, res) => {
   var yyyy = today.getFullYear();
   today = yyyy + "-" + mm + "-" + dd;
 
-  var start = new Date(`${today}T${hr}:${min}`);
-  var end = new Date(`${today}T${hr + 1}:${min}`);
+  const addZero = (hr) => {
+    return hr < 10 ? "0" : "";
+  };
+
+  var start = new Date(`${today}T${addZero(hr)}${hr}:${addZero(min)}${min}`);
+  var end = new Date(`${today}T${addZero(hr)}${hr + 1}:${addZero(min)}${min}`);
 
   const news = await News.find({
     createdAt: {
