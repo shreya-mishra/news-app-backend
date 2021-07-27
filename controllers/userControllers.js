@@ -3,6 +3,8 @@ import User from "../models/userModel.js";
 import otpGenerator from "otp-generator";
 import generateToken from "../utils/generateToken.js";
 import Bookmark from "../models/bookmarkModel.js";
+import fast2sms from "fast-two-sms"
+
 
 //@description     Get user info
 //@route           GET /api/user/
@@ -31,19 +33,22 @@ const getProfile = asyncHandler(async (req, res) => {
 //@access          Public
 const authUser = asyncHandler(async (req, res) => {
   const { phone } = req.body;
-
+  
   const otp = otpGenerator.generate(4, {
     upperCase: false,
     specialChars: false,
   });
-
-  // console.log(otp);
-
+  
+  
   if (!phone || phone.toString().length !== 10) {
     res.status(400);
     throw new Error("Please Provide correct Phone number");
   }
+  fast2sms.sendMessage({authorization : process.env.API_KEY , message : `Your Otp IS ${otp}`,  numbers : [phone]}).then(res=>{
+    console.log("options",res)
 
+  }).catch((err)=>console.log("err in msg sending",err))
+  
   const user = await User.findOne({ phone: phone });
 
   if (user) {
@@ -172,7 +177,7 @@ const addBookmarkNews = asyncHandler(async (req, res) => {
       }
     );
 
-    res.json({ bookmarks: bookmarked, message: "News Bookmarked" });
+    res.json(bookmarked);
   } else {
     const bookmarked = await Bookmark.create({
       user: req.user._id,
